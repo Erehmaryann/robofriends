@@ -3,14 +3,29 @@ import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary';
+
+import { setSearchField } from '../action';
+import { connect } from 'react-redux';
+
 import './App.css';
+
+const mapStateToProps = state => {
+    return {
+        searchField: state.searchField,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+    };
+};
 
 export class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
             robots: [],
-            searchfield: ''
         };
     }
 
@@ -20,16 +35,11 @@ export class App extends Component {
             .then(users => this.setState({ robots: users }));
     }
 
-    onSearchChange = (evt) => {
-        this.setState({
-            searchfield: evt.target.value
-        });
-    };
-
     render() {
-        const { robots, searchfield } = this.state;
+        const { robots } = this.state;
+        const { searchField, onSearchChange } = this.props;
         const filteredRobots = robots.filter(robot => {
-            return robot.name.toLowerCase().includes(searchfield.toLowerCase());
+            return robot.name.toLowerCase().includes(searchField.toLowerCase());
         });
 
         return !robots.length ?
@@ -37,7 +47,7 @@ export class App extends Component {
             (
                 <div className="tc">
                     <h1 className="f1">RoboFriends</h1>
-                    <SearchBox searchChange={this.onSearchChange} />
+                    <SearchBox searchChange={onSearchChange} />
                     <Scroll>
                         <ErrorBoundary>
                             <CardList robots={filteredRobots} />
@@ -48,4 +58,4 @@ export class App extends Component {
     }
 };
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
