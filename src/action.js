@@ -13,6 +13,7 @@ export const setSearchField = (text) => (
     }
 );
 
+// A HOF in order for it to trigger thunkMiddleware
 export const requestRobots = () => (dispatch) => {
     dispatch({
         type: REQUEST_ROBOTS_PENDING,
